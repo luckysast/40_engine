@@ -1,0 +1,80 @@
+{
+    "listeners": {
+        "*:80": {
+            "pass": "routes"
+        }
+    },
+    "settings": {
+        "http": {
+            "header_read_timeout": 10,
+            "body_read_timeout": 10,
+            "send_timeout": 10,
+            "idle_timeout": 60,
+            "max_body_size": 5120,
+        }
+    },
+    "routes": [
+        {
+            "match": {
+                "uri": ["/","/login","/register","/profile", "/users", "/home", "/license", "/bf_engine", "/bf_engine_load"]
+            },
+            "action": {
+                "pass": "applications/usr"
+            }
+        },
+        {
+            "match": {
+                "uri": ["/get_license_nonce","/activate_license", "/license_status"]
+            },
+            "action": {
+                "pass": "applications/license"
+            }
+        },
+        {
+            "match": {
+                "uri": ["/bf/","/bf/*"]
+            },
+            "action": {
+                "pass": "applications/bf"
+            }
+        },
+        {
+            "match": {
+                "uri": "/bf"
+            },
+            "action": {
+                "return": 301,
+                "location": "/bf/"
+            }
+        },
+        {
+            "match": {
+                "uri": ["/docs","/docs/","/docs/*"]
+            },
+            "action": {
+                "pass": "applications/docs"
+            }
+        },
+    ],
+    "applications": {
+        "usr": {
+            "type": "external",
+            "working_directory": "/projects/unit/nodeapp/",
+            "executable": "index.js"
+        },
+        "docs": {
+            "type": "external",
+            "working_directory": "/projects/unit/goapp/",
+            "executable": "main"
+        },
+        "license": {
+            "type": "perl",
+            "working_directory": "/projects/unit/perlapp",
+            "script": "./app.psgi"
+        },
+	"bf": {
+            "type": "php",
+            "root": "/projects/unit/phpapp"
+        }
+    }
+}

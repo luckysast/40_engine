@@ -1,0 +1,30 @@
+version: "3"
+services:
+        unit:
+                build: .
+                links:
+                        - redis
+                        - mongo
+                environment:
+                        - MONGO_HOST=mongo
+                        - REDIS_HOST=redis
+                ports:
+                        - 80:80
+                volumes:
+                        - ./code_storage:/home/code_storage
+                cpus: 1.0
+                mem_limit: 512M
+                stop_grace_period: 2s
+                restart: always
+        redis:
+                image: redis
+                cpus: 0.5
+                mem_limit: 512M
+                restart: always
+        mongo: 
+                volumes:
+                        - ./mongo_files:/data/db
+                image: mongo
+                cpus: 0.5
+                mem_limit: 512M
+                restart: always
